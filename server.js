@@ -32,13 +32,19 @@ app.get('/convert', async (req, res) => {
         <head>
             <title>Currency Converter Result</title>
             <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+            <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+            <script src="/chart.js"></script>
         </head>
         <body>
             <div class="container">
                 <h1 class="my-4">Conversion Result</h1>
                 <p class="lead">The exchange rate of ${from} to ${to} is: ${rate.toFixed(2)}. For ${amount} ${to} you will get ${convertedAmount.toFixed(2)}. ${from}</p>
                 <a href="/" class="btn btn-primary">Convert More</a>
+                <!-- <button type="button" class="btn btn-secondary" onclick="generateChart('${from}', '${to}')">Generate Chart</button> -->
+
+                <canvas id="currencyChart"></canvas>
             </div>
+            <script>generateChart('${from}', '${to}')</script>
         </body>
         </html>
         `);

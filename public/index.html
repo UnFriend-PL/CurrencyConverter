@@ -4,8 +4,6 @@
 <head>
     <title>Currency Converter by Szymon Marcinkowski</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
 </head>
 
 <body>
@@ -28,105 +26,14 @@
             </div>
             <button type="submit" class="btn btn-primary">Convert</button>
         </form>
-
-        <form id="chartForm">
-            <div class="form-group">
-                <label for="currency">Currency:</label>
-                <select class="form-control" id="currency" name="currency" required></select>
-            </div>
-            <div class="form-group">
-                <label for="startDate">Start Date:</label>
-                <input type="date" class="form-control" id="startDate" name="startDate" required>
-            </div>
-            <div class="form-group">
-                <label for="endDate">End Date:</label>
-                <input type="date" class="form-control" id="endDate" name="endDate" required>
-            </div>
-            <button type="submit" class="btn btn-primary">Generate Chart</button>
-        </form>
-        <div class="my-4">
-            <canvas id="chart"></canvas>
-        </div>
     </div>
-
     <script>
-        document.getElementById('chartForm').addEventListener('submit', function (event) {
-            event.preventDefault();
-
-            const currency = document.getElementById('currency').value;
-            const startDate = document.getElementById('startDate').value;
-            const endDate = document.getElementById('endDate').value;
-            // Ustawianie domyślnych dat w formularzu na miesiąc przed dzisiejszą datą
-            const currentDate = new Date();
-            const defaultStartDate = new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, currentDate.getDate()).toISOString().split('T')[0];
-            const defaultEndDate = currentDate.toISOString().split('T')[0];
-            startDate.value = defaultStartDate;
-            endDate.value = defaultEndDate;
-            generateChart(currency, startDate, endDate);
-        });
-        function generateChart(currency, startDate, endDate) {
-            const apiUrl = `http://api.nbp.pl/api/exchangerates/rates/A/${currency}/${startDate}/${endDate}/?format=json`;
-
-            fetch(apiUrl)
-                .then(response => response.json())
-                .then(data => {
-                    const rates = data.rates;
-                    const dates = rates.map(rate => rate.effectiveDate);
-                    const exchangeRates = rates.map(rate => rate.mid);
-
-                    // Create a chart using Chart.js
-                    const chartData = {
-                        labels: dates,
-                        datasets: [{
-                            label: `Exchange Rate (${currency})`,
-                            data: exchangeRates,
-                            backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                            borderColor: 'rgba(75, 192, 192, 1)',
-                            borderWidth: 1
-                        }]
-                    };
-
-                    const chartOptions = {
-                        responsive: true,
-                        scales: {
-                            x: {
-                                display: true,
-                                title: {
-                                    display: true,
-                                    text: 'Date'
-                                }
-                            },
-                            y: {
-                                display: true,
-                                title: {
-                                    display: true,
-                                    text: 'Exchange Rate'
-                                }
-                            }
-                        }
-                    };
-
-                    const chartElement = document.getElementById('chart');
-                    const chart = new Chart(chartElement, {
-                        type: 'line',
-                        data: chartData,
-                        options: chartOptions
-                    });
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                });
-        }
-
-        // JavaScript code to retrieve the list of currencies from the NBP API
         fetch('http://api.nbp.pl/api/exchangerates/tables/A/?format=json')
             .then(response => response.json())
             .then(data => {
                 const rates = data[0].rates;
                 rates.push({ code: 'PLN' });
                 rates.sort((a, b) => a.code.localeCompare(b.code));
-
-                // Adding options to the currency selection list on the conversion form
                 const selectFrom = document.getElementById('from');
                 const selectTo = document.getElementById('to');
                 rates.forEach(rate => {
@@ -141,13 +48,6 @@
                     optionTo.value = rate.code;
                     if (rate.code === 'EUR') optionTo.selected = true;
                     selectTo.add(optionTo);
-
-                    // Adding options to the currency selection list in the chart generation form
-                    const optionCurrency = document.createElement('option');
-                    optionCurrency.text = rate.code;
-                    optionCurrency.value = rate.code;
-                    if (rate.code === 'EUR') optionCurrency.selected = true;
-                    document.getElementById('currency').add(optionCurrency);
                 });
             });
     </script>
