@@ -1,3 +1,3 @@
-## 1. install required modules -> npm install express axios dotenv ejs
-# 2. run node .\server.js
-# 3.go to http://localhost:3000
+### 1. Install required modules -> npm install express axios dotenv ejs
+### 2. Run node .\server.js
+### 3.Go to http://localhost:3000
