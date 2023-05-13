@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Currency Converter by Szymon Marcinkowski</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+</head>
+
+<body>
+    <div class="container">
+        <h1 class="my-4">Currency Converter</h1>
+        <h6 class="mb-5">by Szymon Marcinkowski</h6>
+        <form action="/convert" method="get">
+            <div class="form-group">
+                <label for="amount">Amount:</label>
+                <input type="number" class="form-control" id="amount" name="amount" required>
+            </div>
+            <div class="form-group">
+                <label for="from">From:</label>
+                <select class="form-control" id="from" name="from" required></select>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="to">To:</label>
+                <select class="form-control" id="to" name="to" required></select>
+            </div>
+            <button type="submit" class="btn btn-primary">Convert</button>
+        </form>
+    </div>
+    <script>
+        fetch('http://api.nbp.pl/api/exchangerates/tables/A/?format=json')
+            .then(response => response.json())
+            .then(data => {
+                const rates = data[0].rates;
+                rates.push({ code: 'PLN' });
+                rates.sort((a, b) => a.code.localeCompare(b.code));
+                const selectFrom = document.getElementById('from');
+                const selectTo = document.getElementById('to');
+                rates.forEach(rate => {
+                    const optionFrom = document.createElement('option');
+                    optionFrom.text = rate.code;
+                    optionFrom.value = rate.code;
+                    if (rate.code === 'PLN') optionFrom.selected = true;
+                    selectFrom.add(optionFrom);
+
+                    const optionTo = document.createElement('option');
+                    optionTo.text = rate.code;
+                    optionTo.value = rate.code;
+                    if (rate.code === 'EUR') optionTo.selected = true;
+                    selectTo.add(optionTo);
+                });
+            });
+    </script>
+</body>
+
+</html>
